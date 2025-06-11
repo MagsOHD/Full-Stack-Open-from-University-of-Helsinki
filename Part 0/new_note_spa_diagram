@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant browser
+    participant server
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+    activate server
+    server-->>browser: HTML document
+    deactivate server
+
+    Note right of browser: The browser sends a post request to the server with the data "{"content":"Doin part 0","date":"2025-06-11T20:28:29.011Z"}" the server responds with "{"message":"note created"}"  
+
