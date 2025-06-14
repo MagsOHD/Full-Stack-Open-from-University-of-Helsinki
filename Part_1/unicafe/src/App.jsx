@@ -49,27 +49,30 @@ const Titles = ({ text }) => <h2>{text}</h2>
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 const StatisticsLine = ({ text, nb, pct = '' }) => {
   return (
-    <>
-      <p>{text}: {nb}{pct}</p>
-    </>)
+    <tr>
+      <td>{text}</td>
+      <td>{nb}{pct}</td>
+    </tr>)
 }
 
 const Statistics = ({ texts, bad, neutral, good, all }) => {
   if (all !== 0) {
-    return (<div>
-      <StatisticsLine text={texts.goodClick} nb={good} />
-      <StatisticsLine text={texts.neutralClick} nb={neutral} />
-      <StatisticsLine text={texts.badClick} nb={bad} />
-      <StatisticsLine text={texts.all} nb={all} />
-      <StatisticsLine text={texts.average} nb={all != 0 ? ((good - bad) / all) : 0} />
-      <StatisticsLine text={texts.positive} nb={all != 0 ? (good * 100 / all) : 0} pct='%' />
-    </div>)
+    return (<table>
+      <tbody>
+        <StatisticsLine text={texts.goodClick} nb={good} />
+        <StatisticsLine text={texts.neutralClick} nb={neutral} />
+        <StatisticsLine text={texts.badClick} nb={bad} />
+        <StatisticsLine text={texts.all} nb={all} />
+        <StatisticsLine text={texts.average} nb={all != 0 ? ((good - bad) / all) : 0} />
+        <StatisticsLine text={texts.positive} nb={all != 0 ? (good * 100 / all) : 0} pct='%' />
+      </tbody>
+    </table>)
   }
 
-  return(
-  <div>
-    <p>No feedback given</p>
-  </div>)
+  return (
+    <div>
+      <p>No feedback given</p>
+    </div>)
 }
 
 export default App
