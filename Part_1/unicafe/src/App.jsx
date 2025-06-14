@@ -27,36 +27,49 @@ const App = () => {
     setNeutral(neutral + 1)
   }
 
-  const handleGoodClick = () =>{
+  const handleGoodClick = () => {
     setAll(all + 1)
     setGood(good + 1)
   }
 
   return (
     <div>
-      <Header text={texts.headerText}/>
-      <Button onClick={handleBadClick} text={texts.badClick}/>
-      <Button onClick={handleNeutralClick} text={texts.neutralClick}/>
-      <Button onClick={handleGoodClick} text={texts.goodClick}/>
-      <Titles text={texts.tilteText}/>
-      <Statistics text={texts.goodClick} nb={good}/>
-      <Statistics text={texts.neutralClick} nb={neutral}/>
-      <Statistics text={texts.badClick} nb={bad}/>
-      <Statistics text={texts.all} nb={all}/>
-      <Statistics text={texts.average} nb={all != 0 ? ((good - bad)/all) : 0}/>
-      <Statistics text={texts.positive} nb={ all != 0 ? (good * 100 / all) : 0} pct='%'/>
+      <Header text={texts.headerText} />
+      <Button onClick={handleBadClick} text={texts.badClick} />
+      <Button onClick={handleNeutralClick} text={texts.neutralClick} />
+      <Button onClick={handleGoodClick} text={texts.goodClick} />
+      <Titles text={texts.tilteText} />
+      <Statistics texts={texts} bad={bad} neutral={neutral} good={good} all={all} />
     </div>
   )
 }
 
-const Header = ({text}) => <h1>{text}</h1>
-const Titles = ({text}) => <h2>{text}</h2>
+const Header = ({ text }) => <h1>{text}</h1>
+const Titles = ({ text }) => <h2>{text}</h2>
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
-const Statistics = ({text, nb, pct=''}) => {
+const StatisticsLine = ({ text, nb, pct = '' }) => {
   return (
-  <>
-    <p>{text}: {nb}{pct}</p>
-  </>)
+    <>
+      <p>{text}: {nb}{pct}</p>
+    </>)
+}
+
+const Statistics = ({ texts, bad, neutral, good, all }) => {
+  if (all !== 0) {
+    return (<div>
+      <StatisticsLine text={texts.goodClick} nb={good} />
+      <StatisticsLine text={texts.neutralClick} nb={neutral} />
+      <StatisticsLine text={texts.badClick} nb={bad} />
+      <StatisticsLine text={texts.all} nb={all} />
+      <StatisticsLine text={texts.average} nb={all != 0 ? ((good - bad) / all) : 0} />
+      <StatisticsLine text={texts.positive} nb={all != 0 ? (good * 100 / all) : 0} pct='%' />
+    </div>)
+  }
+
+  return(
+  <div>
+    <p>No feedback given</p>
+  </div>)
 }
 
 export default App
