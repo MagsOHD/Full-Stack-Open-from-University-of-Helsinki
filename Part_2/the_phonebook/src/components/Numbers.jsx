@@ -5,7 +5,7 @@ const Numbers = ({ persons }) => {
   return (
     <ul>
       {persons.map((person, index) => (
-        <NumberLine key={person.name} person={person.name} />
+        <NumberLine key={person.name} person={person} />
       ))}
     </ul>
   );
