@@ -1,10 +1,10 @@
 import NumberLine from './NumberLine';
 
-const Numbers = ({ persons }) => {
+const Numbers = ({ persons, deletePerson }) => {
   return (
     <ul>
-      {persons.map((person, index) => (
-        <NumberLine key={person.name} person={person} />
+      {persons.map((person) => (
+        <NumberLine key={person.id} person={person} deletePerson={() => deletePerson(person.id)}/>
       ))}
     </ul>
   );
