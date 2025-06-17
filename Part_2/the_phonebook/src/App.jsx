@@ -40,9 +40,6 @@ const App = () => {
           alert('Failed to add person. Please try again later.');
         })
     }
-    console.log('form submitted:', personObject)
-    console.log('persons:', persons)
-    console.log('filteredPersons:', filteredPersons)
     setPersons(persons.concat(personObject))
     setFilteredPersons(persons.concat(personObject))
 
