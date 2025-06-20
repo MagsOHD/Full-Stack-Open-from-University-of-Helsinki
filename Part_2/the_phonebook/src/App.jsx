@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, StrictMode } from 'react'
 import phonebookService from './services/phonebookService'
 import Numbers from './components/Numbers'
 import PersonFilter from './components/PersonFilter'
 import PersonForm from './components/PersonForm'
+import Notification from './components/Notification'
 import axios from 'axios';
+import './style/index.css';
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [filteredPersons, setFilteredPersons] = useState(persons)
-
+  const [notifMessage, setNotifMessage] = useState([]);
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
@@ -25,19 +27,40 @@ const App = () => {
         phonebookService.update(persons.find(person => person.name === newName).id, personObject).then(returnedPerson => {
           setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
           setFilteredPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
+          console.log('Updated person:', returnedPerson);
+          console.log('Persons after update:', persons);
+          console.log('Filtered persons after update:', filteredPersons);
+          setNotifMessage({ txt: `Updated ${returnedPerson.name}`, type: 'success' });
+          setTimeout(() => {
+            setNotifMessage([]);
+          }, 3000);
         }).catch(error => {
-          console.error('Error updating person:', error);
-          alert('Failed to update person. Please try again later.');
+          setNotifMessage({ txt: `Information of ${newName} has already been removed from server`, type: 'error' });
+          setTimeout(() => {
+            setNotifMessage([]);
+          }, 3000);
         })
     } else {
       phonebookService.create(personObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           setFilteredPersons(persons.concat(returnedPerson))
+          console.log('Updated person:', returnedPerson);
+          console.log('Persons after update:', persons);
+          console.log('Filtered persons after update:', filteredPersons);
+
+          setNotifMessage({ txt: `Added ${returnedPerson.name}`, type: 'success' });
+          setTimeout(() => {
+            setNotifMessage([]);
+          }, 3000);
+
         })
         .catch(error => {
-          console.error('Error adding person:', error);
-          alert('Failed to add person. Please try again later.');
+          setNotifMessage({ txt: `Failed to add ${newName}. Please try again later.`, type: 'error' });
+          setTimeout(() => {
+            setNotifMessage([]);
+          }, 3000);
+
         })
     }
     setPersons(persons.concat(personObject))
@@ -63,11 +86,19 @@ const App = () => {
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
           setFilteredPersons(filteredPersons.filter(person => person.id !== id))
+          setNotifMessage({ txt: 'Person deleted successfully', type: 'success' });
+          setTimeout(() => {
+            setNotifMessage([]);
+          }, 3000);
+
         })
         .catch(error => {
-          console.error('Error deleting person:', error);
-          alert('Failed to delete person. Please try again later.');
-        })
+          setNotifMessage({ txt: `Failed to delete person. Please try again later.`, type: 'error' });
+          setTimeout(() => {
+            setNotifMessage([]);
+          }, 3000);
+
+        });
     }
   }
 
@@ -76,24 +107,30 @@ const App = () => {
       setPersons(initialPersons)
       setFilteredPersons(initialPersons)
     }).catch(error => {
-      console.error('Error fetching data:', error);
-      alert('Failed to fetch data from the server. Please try again later.');
+      setNotifMessage({ txt: 'Failed to fetch phonebook data. Please try again later.', type: 'error' });
+      setTimeout(() => {
+        setNotifMessage([]);
+      }, 3000);
+
     })
   }, []);
 
   return (
-    <div>
-      <PersonFilter value={newFilter} handler={handleFilterChange} />
-      <h2>Phonebook</h2>
-      <PersonForm
-        newName={newName}
-        handleNameChange={handleNameChange}
-        newNumber={newNumber}
-        handleNumberChange={handleNumberChange}
-        handleSubmit={handleSubmit} />
-      <h2>Numbers</h2>
-      <Numbers persons={filteredPersons} deletePerson={deletePerson}/>
-    </div>
+    <StrictMode>
+      <div>
+        <Notification message={notifMessage.txt} type={notifMessage.type} />
+        <PersonFilter value={newFilter} handler={handleFilterChange} />
+        <h2>Phonebook</h2>
+        <PersonForm
+          newName={newName}
+          handleNameChange={handleNameChange}
+          newNumber={newNumber}
+          handleNumberChange={handleNumberChange}
+          handleSubmit={handleSubmit} />
+        <h2>Numbers</h2>
+        <Numbers persons={filteredPersons} deletePerson={deletePerson} />
+      </div>
+    </StrictMode>
   )
 }
 
