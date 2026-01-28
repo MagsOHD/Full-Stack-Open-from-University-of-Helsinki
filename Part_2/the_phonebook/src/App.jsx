@@ -25,11 +25,8 @@ const App = () => {
     if (persons.find(person => person.name === newName)) {
       confirm(`${newName} is already added to phonebook replace the old number with a new one?`) &&
         phonebookService.update(persons.find(person => person.name === newName).id, personObject).then(returnedPerson => {
-          setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
-          setFilteredPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
-          console.log('Updated person:', returnedPerson);
-          console.log('Persons after update:', persons);
-          console.log('Filtered persons after update:', filteredPersons);
+          setPersons(prevPersons => prevPersons.map(person => person.name !== newName ? person : returnedPerson))
+          setFilteredPersons(prevFiltered => prevFiltered.map(person => person.name !== newName ? person : returnedPerson))
           setNotifMessage({ txt: `Updated ${returnedPerson.name}`, type: 'success' });
           setTimeout(() => {
             setNotifMessage([]);
@@ -43,28 +40,20 @@ const App = () => {
     } else {
       phonebookService.create(personObject)
         .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-          setFilteredPersons(persons.concat(returnedPerson))
-          console.log('Updated person:', returnedPerson);
-          console.log('Persons after update:', persons);
-          console.log('Filtered persons after update:', filteredPersons);
-
+          setPersons(prevPersons => prevPersons.concat(returnedPerson))
+          setFilteredPersons(prevFiltered => prevFiltered.concat(returnedPerson))
           setNotifMessage({ txt: `Added ${returnedPerson.name}`, type: 'success' });
           setTimeout(() => {
             setNotifMessage([]);
           }, 3000);
-
         })
         .catch(error => {
           setNotifMessage({ txt: `Failed to add ${newName}. Please try again later.`, type: 'error' });
           setTimeout(() => {
             setNotifMessage([]);
           }, 3000);
-
         })
     }
-    setPersons(persons.concat(personObject))
-    setFilteredPersons(persons.concat(personObject))
 
     setNewName('')
     setNewNumber('')
@@ -84,20 +73,18 @@ const App = () => {
     if (window.confirm('Are you sure you want to delete this person?')) {
       phonebookService.deletePerson(id)
         .then(() => {
-          setPersons(persons.filter(person => person.id !== id))
-          setFilteredPersons(filteredPersons.filter(person => person.id !== id))
+          setPersons(prevPersons => prevPersons.filter(person => person.id !== id))
+          setFilteredPersons(prevFiltered => prevFiltered.filter(person => person.id !== id))
           setNotifMessage({ txt: 'Person deleted successfully', type: 'success' });
           setTimeout(() => {
             setNotifMessage([]);
           }, 3000);
-
         })
         .catch(error => {
           setNotifMessage({ txt: `Failed to delete person. Please try again later.`, type: 'error' });
           setTimeout(() => {
             setNotifMessage([]);
           }, 3000);
-
         });
     }
   }
@@ -116,7 +103,6 @@ const App = () => {
   }, []);
 
   return (
-    <StrictMode>
       <div>
         <Notification message={notifMessage.txt} type={notifMessage.type} />
         <PersonFilter value={newFilter} handler={handleFilterChange} />
@@ -130,7 +116,6 @@ const App = () => {
         <h2>Numbers</h2>
         <Numbers persons={filteredPersons} deletePerson={deletePerson} />
       </div>
-    </StrictMode>
   )
 }
 
